@@ -1,19 +1,16 @@
 //
-//  ViewController.swift
+//  MovieDetailViewController.swift
 //  Natife Test Movies App
 //
-//  Created by Ivan Skoryk on 07.10.2023.
+//  Created by Ivan Skoryk on 08.10.2023.
 //
 
 import UIKit
 
-class ViewController: UIViewController {
-
+final class MovieDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+
         // Do any additional setup after loading the view.
     }
-
-
 }
-
