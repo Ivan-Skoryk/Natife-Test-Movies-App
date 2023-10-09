@@ -37,10 +37,20 @@ struct MoviesListDTO: Codable {
     }
 }
 
+struct Movie {
+    let id: Int
+    let rating: Double
+    let year: String
+    let title: String
+    let posterImageURLString: String
+    let backdropwImageURLString: String
+    let genres: [GenreDTO]
+    let video: Bool
+}
+
 struct MovieDetailDTO: Codable {
     let id: Int
     let title: String
-    let originalTitle: String
     let releaseDate: String
     let productionCountries: [ProductionCountry]
     let genres: [GenreDTO]
@@ -53,7 +63,6 @@ struct MovieDetailDTO: Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case title
-        case originalTitle = "original_title"
         case releaseDate = "release_date"
         case productionCountries = "production_countries"
         case genres
@@ -67,4 +76,17 @@ struct MovieDetailDTO: Codable {
 
 struct ProductionCountry: Codable {
     let name: String
+}
+
+struct MovieDetail {
+    let id: Int
+    let genres: [GenreDTO]
+    let title: String
+    let countries: [String]
+    let year: String
+    let rating: Double
+    let overview: String
+    let video: Bool
+    let posterImageURLString: String
+    let backdropImageURLString: String
 }

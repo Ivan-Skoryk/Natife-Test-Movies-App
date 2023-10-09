@@ -9,21 +9,5 @@ import Foundation
 
 protocol MovieProviderProtocol {
     func getPopularMovies(page: Int, completion: @escaping (([Movie]) -> Void))
-    func getMovieDetail(for movie: Movie, completion: @escaping ((MovieDetail) -> Void))
-}
-
-struct Movie {
-    let id: Int
-    let rating: Double
-    let year: String
-    let title: String
-    let posterImageURLString: String
-    let backdropwImageURLString: String
-    let genres: [GenreDTO]
-    let video: Bool
-}
-
-struct MovieDetail {
-    let id: Int
-    let genres: [GenreDTO]
+    func getMovieDetail(for movieID: Int, completion: @escaping ((MovieDetail) -> Void))
 }

@@ -11,6 +11,7 @@ class MoviesListViewModel {
     var movies = [Movie]()
     
     var moviesProvider: MovieProviderProtocol
+    var router: MoviesListRouterProtocol!
     
     init(moviesProvider: MovieProviderProtocol) {
         self.moviesProvider = moviesProvider
@@ -21,6 +22,16 @@ class MoviesListViewModel {
         moviesProvider.getPopularMovies(page: page) { [weak self] movies in
             self?.movies.append(contentsOf: movies)
             completion()
+        }
+    }
+    
+    private func getMovieDetail(for index: Int, completion: @escaping ((MovieDetail) -> Void)) {
+        moviesProvider.getMovieDetail(for: movies[index].id, completion: completion)
+    }
+    
+    func navigateToMovieDetail(index: Int) {
+        getMovieDetail(for: index) { [weak self] detail in
+            self?.router.navigateToMovieDetails(movieDetail: detail)
         }
     }
 }

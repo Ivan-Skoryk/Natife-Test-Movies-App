@@ -14,6 +14,8 @@ final class MoviesViewController: UIViewController {
     private var isLoading = false
     private var refreshControl = UIRefreshControl()
     
+    private var isKeyboardShown = false
+    
     var viewModel: MoviesListViewModel!
     
     override func viewDidLoad() {
@@ -21,6 +23,27 @@ final class MoviesViewController: UIViewController {
         
         setupViews()
         reloadData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidDisappear), name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear), name: UIResponder.keyboardWillShowNotification, object: nil)
+    }
+
+    @objc func keyboardWillAppear() {
+        print(#function)
+        isKeyboardShown = true
+    }
+
+    @objc func keyboardDidDisappear() {
+        print(#function)
+        isKeyboardShown = false
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
     }
     
     private func setupViews() {
@@ -109,8 +132,11 @@ extension MoviesViewController: UITableViewDataSource {
 
 extension MoviesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = MovieDetailViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        guard !isKeyboardShown else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+        viewModel.navigateToMovieDetail(index: indexPath.row)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
@@ -122,6 +148,15 @@ extension MoviesViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        print(#function)
+    }
+    
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        print(#function)
+        return true
     }
 }
 

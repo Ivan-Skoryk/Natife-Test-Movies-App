@@ -14,7 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: scene)
-        let viewController = MoviesSceneBuilder.createInstance()
+        let viewController = MoviesSceneBuilder.createScene()
         window.rootViewController = UINavigationController(rootViewController: viewController)
         
         self.window = window

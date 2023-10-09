@@ -8,10 +8,13 @@
 import Foundation
 
 final class MoviesSceneBuilder {
-    static func createInstance() -> MoviesViewController {
+    static func createScene() -> MoviesViewController {
         let moviesProvider = MovieProvider()
         let viewModel = MoviesListViewModel(moviesProvider: moviesProvider)
+        let router = MoviesListRouter()
         let viewController = MoviesViewController()
+        router.viewController = viewController
+        viewModel.router = router
         viewController.viewModel = viewModel
         return viewController
     }
