@@ -16,27 +16,33 @@ final class MovieProvider {
         case original = "/original/"
     }
     
-    let networkManager = NetworkManager.shared
+    private let networkManager: NetworkManagerProtocol!
     
     private var genres = [GenreDTO]()
     
-    init() {
+    init(networkManager: NetworkManagerProtocol) {
+        self.networkManager = networkManager
         getGenres()
     }
     
-    func getGenres() {
+    private func getGenres() {
         let params = [
             "language": "en"
         ]
         
         networkManager.movieGenresRequest(params: params) { [weak self] result in
-            self?.decodeData(of: GenresDTO.self, from: result) { [weak self] genres in
-                self?.genres = genres.genres
+            self?.decodeData(of: GenresDTO.self, from: result) { [weak self] result in
+                switch result {
+                case .success(let genres):
+                    self?.genres = genres.genres
+                case .failure(let error):
+                    print("genres load failed with error: \(error.localizedDescription)")
+                }
             }
         }
     }
     
-    private func convertMoviesDTO(movies: [MovieDTO], completion: @escaping (([Movie]) -> Void)) {
+    private func convertMoviesDTO(movies: [MovieDTO]) -> [Movie] {
         var result = [Movie]()
         for movie in movies {
             let year = extractYear(from: movie.releaseDate)
@@ -54,11 +60,13 @@ final class MovieProvider {
             result.append(mov)
         }
         
-        completion(result)
+        return result
     }
     
-    private func getImageURL(for path: String, imageSize: ImageSize) -> String {
-        return NetworkManager.Constants.baseImageStorageURL + imageSize.rawValue + path
+    private func getImageURL(for path: String?, imageSize: ImageSize) -> String? {
+        path != nil
+        ? NetworkManager.Constants.baseImageStorageURL + imageSize.rawValue + path!
+        : nil
     }
     
     private func extractYear(from date: String) -> String {
@@ -76,55 +84,89 @@ final class MovieProvider {
 }
 
 extension MovieProvider: MovieProviderProtocol {
-    func decodeData<T:Codable>(of type: T.Type, from result: Result<Data, Error>, completion: @escaping ((T) -> Void)) {
+    private func decodeData<T:Codable>(of type: T.Type, from result: Result<Data, Error>, completion: @escaping (((Result<T, Error>)) -> Void)) {
         switch result {
         case .success(let data):
             do {
                 let decoded = try JSONDecoder().decode(T.self, from: data)
-                completion(decoded)
+                completion(.success(decoded))
             } catch {
-                // TODO: handle error
+                completion(.failure(error))
             }
-        case .failure(_):
-            // TODO: handle error
+        case .failure(let error):
+            completion(.failure(error))
             break
         }
     }
     
-    func getPopularMovies(page: Int, completion: @escaping (([Movie]) -> Void)) {
-        let params: [String: Any] = [
-            "language": "en",
-            "page": page
-        ]
+    private func handleMoviesListDTOResult(
+        _ result: Result<MoviesListDTO, Error>,
+        completion: @escaping ((Result<MoviesList, Error>) -> Void)
+    ) {
+        switch result {
+        case .success(let list):
+            let movies = self.convertMoviesDTO(movies: list.movies)
+            let list = MoviesList(movies: movies, totalPages: list.totalPages)
+            completion(.success(list))
+        case .failure(let error):
+            completion(.failure(error))
+        }
+    }
+    
+    func getPopularMovies(page: Int, completion: @escaping ((Result<MoviesList, Error>) -> Void)) {
+        if genres.count == 0 {
+            getGenres()
+        }
         
-        networkManager.popularMoviesRequest(params: params) { [weak self] result in
-            self?.decodeData(of: MoviesListDTO.self, from: result) { [weak self] list in
-                self?.convertMoviesDTO(movies: list.movies, completion: completion)
+        networkManager.popularMoviesRequest(page: page) { [weak self] result in
+            self?.decodeData(of: MoviesListDTO.self, from: result) { [weak self] result in
+                self?.handleMoviesListDTOResult(result, completion: completion)
             }
         }
     }
     
-    func getMovieDetail(for movieID: Int, completion: @escaping ((MovieDetail) -> Void)) {
+    func getMovieDetail(for movieID: Int, completion: @escaping ((Result<MovieDetail, Error>) -> Void)) {
+        if genres.count == 0 {
+            getGenres()
+        }
+        
         networkManager.movieDetailRequest(movieID: movieID) { [weak self] result in
-            self?.decodeData(of: MovieDetailDTO.self, from: result) { [weak self] detailDTO in
-                let countries = detailDTO.productionCountries.map { $0.name }
-                let year = self?.extractYear(from: detailDTO.releaseDate) ?? "Unknown"
-                let posterURL = self?.getImageURL(for: detailDTO.posterPath, imageSize: .original) ?? ""
-                let backdropURL = self?.getImageURL(for: detailDTO.backdropPath, imageSize: .original) ?? ""
-                
-                let detail = MovieDetail(
-                    id: detailDTO.id,
-                    genres: detailDTO.genres,
-                    title: detailDTO.title,
-                    countries: countries,
-                    year: year,
-                    rating: detailDTO.rating,
-                    overview: detailDTO.overview,
-                    video: detailDTO.video,
-                    posterImageURLString: posterURL,
-                    backdropImageURLString: backdropURL
-                )
-                completion(detail)
+            self?.decodeData(of: MovieDetailDTO.self, from: result) { [weak self] result in
+                switch result {
+                case .success(let detailDTO):
+                    let countries = detailDTO.productionCountries.map { $0.name }
+                    let year = self?.extractYear(from: detailDTO.releaseDate) ?? "Unknown"
+                    let posterURL = self?.getImageURL(for: detailDTO.posterPath, imageSize: .original) ?? ""
+                    let backdropURL = self?.getImageURL(for: detailDTO.backdropPath, imageSize: .original) ?? ""
+                    
+                    let detail = MovieDetail(
+                        id: detailDTO.id,
+                        genres: detailDTO.genres,
+                        title: detailDTO.title,
+                        countries: countries,
+                        year: year,
+                        rating: detailDTO.rating,
+                        overview: detailDTO.overview,
+                        video: detailDTO.video,
+                        posterImageURLString: posterURL,
+                        backdropImageURLString: backdropURL
+                    )
+                    completion(.success(detail))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func searchMovie(by name: String, page: Int, completion: @escaping ((Result<MoviesList, Error>) -> Void)) {
+        if genres.count == 0 {
+            getGenres()
+        }
+        
+        networkManager.searchMovieRequest(name: name, page: page) { [weak self] result in
+            self?.decodeData(of: MoviesListDTO.self, from: result) { [weak self] result in
+                self?.handleMoviesListDTOResult(result, completion: completion)
             }
         }
     }

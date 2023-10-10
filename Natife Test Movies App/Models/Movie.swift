@@ -12,8 +12,8 @@ struct MovieDTO: Codable {
     let rating: Double
     let releaseDate: String
     let title: String
-    let posterPath: String
-    let backdropPath: String
+    let posterPath: String?
+    let backdropPath: String?
     let genres: [Int]
     let video: Bool
     
@@ -31,9 +31,11 @@ struct MovieDTO: Codable {
 
 struct MoviesListDTO: Codable {
     let movies: [MovieDTO]
+    let totalPages: Int
     
     enum CodingKeys: String, CodingKey {
         case movies = "results"
+        case totalPages = "total_pages"
     }
 }
 
@@ -42,10 +44,15 @@ struct Movie {
     let rating: Double
     let year: String
     let title: String
-    let posterImageURLString: String
-    let backdropwImageURLString: String
+    let posterImageURLString: String?
+    let backdropwImageURLString: String?
     let genres: [GenreDTO]
     let video: Bool
+}
+
+struct MoviesList {
+    let movies: [Movie]
+    let totalPages: Int
 }
 
 struct MovieDetailDTO: Codable {
@@ -57,8 +64,8 @@ struct MovieDetailDTO: Codable {
     let overview: String
     let rating: Double
     let video: Bool
-    let posterPath: String
-    let backdropPath: String
+    let posterPath: String?
+    let backdropPath: String?
     
     enum CodingKeys: String, CodingKey {
         case id

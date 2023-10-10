@@ -15,6 +15,9 @@ final class MoviesTableViewCell: UITableViewCell {
     @IBOutlet private weak var genresLabel: UILabel!
     @IBOutlet private weak var ratingsLabel: UILabel!
     
+    private var progressStackView = UIStackView()
+    private var progressView = UIProgressView()
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         setupImageView()
@@ -47,9 +50,62 @@ final class MoviesTableViewCell: UITableViewCell {
         }
     }
     
+    private func setupNoImageAvailable() {
+        let label = UILabel()
+        label.text = "No Image Available"
+        label.textColor = .lightGray
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = .boldSystemFont(ofSize: 19)
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        posterContainer.insertSubview(label, at: 0)
+        
+        NSLayoutConstraint.activate([
+            label.centerYAnchor.constraint(equalTo: posterContainer.centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: posterContainer.leadingAnchor, constant: 16.0),
+            label.trailingAnchor.constraint(equalTo: posterContainer.trailingAnchor, constant: -16.0)
+        ])
+    }
+    
+    private func setupProgressView() {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.startAnimating()
+        
+        progressView = UIProgressView()
+        
+        progressStackView = UIStackView(arrangedSubviews: [activityIndicator, progressView])
+        progressStackView.axis = .vertical
+        progressStackView.spacing = 8.0
+        
+        progressStackView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        
+        posterContainer.insertSubview(progressStackView, at: 0)
+        
+        NSLayoutConstraint.activate([
+            progressView.heightAnchor.constraint(equalToConstant: 10),
+            
+            progressStackView.centerYAnchor.constraint(equalTo: posterContainer.centerYAnchor),
+            progressStackView.leadingAnchor.constraint(equalTo: posterContainer.leadingAnchor, constant: 16.0),
+            progressStackView.trailingAnchor.constraint(equalTo: posterContainer.trailingAnchor, constant: -16.0)
+        ])
+    }
+    
     func config(with movie: Movie) {
-        if let url = URL(string: movie.backdropwImageURLString) {
-            posterImageView.kf.setImage(with: url)
+        if let urlString = movie.backdropwImageURLString ?? movie.posterImageURLString,
+           let url = URL(string: urlString) {
+            setupProgressView()
+            
+            posterImageView.kf.setImage(with: url, placeholder: nil, options: nil) { [weak self] receivedSize, totalSize in
+                self?.progressView.setProgress(Float(receivedSize) / Float(totalSize), animated: true)
+            } completionHandler: { [weak self] _ in
+                self?.progressStackView.subviews.forEach { $0.removeFromSuperview() }
+                self?.progressStackView.removeFromSuperview()
+            }
+        } else {
+            setupNoImageAvailable()
         }
         
         titleAndYearLabel.text = movie.title + ", " + movie.year

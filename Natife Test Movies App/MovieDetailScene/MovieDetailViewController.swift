@@ -17,7 +17,11 @@ final class MovieDetailViewController: UIViewController {
     @IBOutlet private weak var ratingsLabel: UILabel!
     @IBOutlet private weak var movieDescriptionLabel: UILabel!
     
-    var viewModel: MovieDetailViewModel!
+    @IBOutlet private weak var containerView: UIView!
+    private var progressStackView = UIStackView()
+    private var progressView = UIProgressView()
+    
+    var viewModel: MovieDetailViewModelProtocol!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,10 +47,30 @@ final class MovieDetailViewController: UIViewController {
     
     private func setupPosterImageView() {
         posterImageView.contentMode = .scaleAspectFit
+        posterImageView.layer.shadowRadius = 10
+        posterImageView.layer.shadowOpacity = 0.6
+        posterImageView.clipsToBounds = false
+        
         guard let url = URL(string: viewModel.movieDetail.posterImageURLString) else {
+            setupNoImageAvailable()
             return
         }
-        posterImageView.kf.setImage(with: url)
+        setupProgressView()
+        
+        posterImageView.kf.setImage(with: url, placeholder: nil, options: nil) { [weak self] receivedSize, totalSize in
+            self?.progressView.setProgress(Float(receivedSize) / Float(totalSize), animated: true)
+        } completionHandler: { [weak self] _ in
+            self?.progressStackView.subviews.forEach { $0.removeFromSuperview() }
+            self?.progressStackView.removeFromSuperview()
+        }
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOnImageView))
+        posterImageView.addGestureRecognizer(tap)
+        posterImageView.isUserInteractionEnabled = true
+    }
+    
+    @objc private func didTapOnImageView() {
+        viewModel.navigateToFullscreenPosterImage()
     }
     
     private func setupNavigationBar() {
@@ -58,6 +82,49 @@ final class MovieDetailViewController: UIViewController {
     
     @objc private func pop() {
         viewModel.pop()
+    }
+    
+    private func setupNoImageAvailable() {
+        let label = UILabel()
+        label.text = "No Image Available"
+        label.textColor = .lightGray
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = .boldSystemFont(ofSize: 19)
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            label.centerYAnchor.constraint(equalTo: posterImageView.centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: posterImageView.leadingAnchor, constant: 16.0),
+            label.trailingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: -16.0)
+        ])
+    }
+    
+    private func setupProgressView() {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.startAnimating()
+        
+        progressView = UIProgressView()
+        
+        progressStackView = UIStackView(arrangedSubviews: [activityIndicator, progressView])
+        progressStackView.axis = .vertical
+        progressStackView.spacing = 8.0
+        
+        progressStackView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        
+        containerView.addSubview(progressStackView)
+        
+        NSLayoutConstraint.activate([
+            progressView.heightAnchor.constraint(equalToConstant: 10),
+            
+            progressStackView.centerYAnchor.constraint(equalTo: posterImageView.centerYAnchor),
+            progressStackView.leadingAnchor.constraint(equalTo: posterImageView.leadingAnchor, constant: 16.0),
+            progressStackView.trailingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: -16.0)
+        ])
     }
     
     @IBAction private func trailerButtonDidTap(_ sender: UIButton) {

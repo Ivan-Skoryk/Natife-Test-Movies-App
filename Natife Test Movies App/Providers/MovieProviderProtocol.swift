@@ -8,6 +8,7 @@
 import Foundation
 
 protocol MovieProviderProtocol {
-    func getPopularMovies(page: Int, completion: @escaping (([Movie]) -> Void))
-    func getMovieDetail(for movieID: Int, completion: @escaping ((MovieDetail) -> Void))
+    func getPopularMovies(page: Int, completion: @escaping ((Result<MoviesList, Error>) -> Void))
+    func getMovieDetail(for movieID: Int, completion: @escaping ((Result<MovieDetail, Error>) -> Void))
+    func searchMovie(by name: String, page: Int, completion: @escaping ((Result<MoviesList, Error>) -> Void))
 }

@@ -8,22 +8,26 @@
 import UIKit
 
 protocol MovieDetailRouterProtocol {
-    func navigateToFullscreenPosterImage()
+    func navigateToFullscreenPosterImage(imageURLString: String)
     func navigateToVideoPlayer()
     func pop()
 }
 
-class MovieDetailRouter {
-    weak var viewController: UIViewController?
+final class MovieDetailRouter {
+    var viewController: UIViewController?
 }
 
 extension MovieDetailRouter: MovieDetailRouterProtocol {
-    func navigateToFullscreenPosterImage() {
+    func navigateToFullscreenPosterImage(imageURLString: String) {
+        let posterModalViewController = PosterImageModalViewController()
+        posterModalViewController.posterImageURLString = imageURLString
         
+        posterModalViewController.modalPresentationStyle = .popover
+        
+        viewController?.navigationController?.present(UINavigationController(rootViewController: posterModalViewController), animated: true)
     }
     
     func navigateToVideoPlayer() {
-        
     }
     
     func pop() {

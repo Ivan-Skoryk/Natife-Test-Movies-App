@@ -9,15 +9,28 @@ import UIKit
 
 protocol MoviesListRouterProtocol {
     func navigateToMovieDetails(movieDetail: MovieDetail)
+    func presentError(_ error: Error, onDismiss: @escaping (() -> Void))
 }
 
-class MoviesListRouter {
-    weak var viewController: UIViewController?
+final class MoviesListRouter {
+    var viewController: UIViewController?
 }
 
 extension MoviesListRouter: MoviesListRouterProtocol {
     func navigateToMovieDetails(movieDetail: MovieDetail) {
         let vc = MovieDetailSceneBuilder.createScene(with: movieDetail)
         viewController?.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func presentError(_ error: Error, onDismiss: @escaping (() -> Void)) {
+        let description = error.localizedDescription
+        
+        let alert = UIAlertController(title: "Error", message: description, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel) { _ in
+            onDismiss()
+        }
+        alert.addAction(action)
+        
+        viewController?.present(alert, animated: true)
     }
 }

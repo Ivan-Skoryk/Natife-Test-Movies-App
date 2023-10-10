@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B0CF1822AD575540081302F /* PosterImageModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0CF1812AD575540081302F /* PosterImageModalViewController.swift */; };
+		4B0CF1842AD575AE0081302F /* PosterImageModalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4B0CF1832AD575AE0081302F /* PosterImageModalViewController.xib */; };
 		4B550BB62AD0BFB40010BC89 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B550BB52AD0BFB40010BC89 /* AppDelegate.swift */; };
 		4B550BB82AD0BFB40010BC89 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B550BB72AD0BFB40010BC89 /* SceneDelegate.swift */; };
 		4B550BBA2AD0BFB40010BC89 /* MoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B550BB92AD0BFB40010BC89 /* MoviesViewController.swift */; };
@@ -33,6 +35,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B0CF1812AD575540081302F /* PosterImageModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterImageModalViewController.swift; sourceTree = "<group>"; };
+		4B0CF1832AD575AE0081302F /* PosterImageModalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PosterImageModalViewController.xib; sourceTree = "<group>"; };
 		4B550BB22AD0BFB40010BC89 /* Natife Test Movies App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Natife Test Movies App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B550BB52AD0BFB40010BC89 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B550BB72AD0BFB40010BC89 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -134,6 +138,8 @@
 				4BF75C662AD46B2C006C938F /* MovieDetailViewModel.swift */,
 				4B6D5DBC2AD2FF98006902F1 /* MovieDetailViewController.swift */,
 				4B6D5DC02AD30A14006902F1 /* MovieDetailViewController.xib */,
+				4B0CF1812AD575540081302F /* PosterImageModalViewController.swift */,
+				4B0CF1832AD575AE0081302F /* PosterImageModalViewController.xib */,
 			);
 			path = MovieDetailScene;
 			sourceTree = "<group>";
@@ -233,6 +239,7 @@
 				4B550BC22AD0BFB50010BC89 /* LaunchScreen.storyboard in Resources */,
 				4B6D5DC32AD30FDD006902F1 /* MoviesViewController.xib in Resources */,
 				4B6D5DC12AD30A14006902F1 /* MovieDetailViewController.xib in Resources */,
+				4B0CF1842AD575AE0081302F /* PosterImageModalViewController.xib in Resources */,
 				4B550BBF2AD0BFB50010BC89 /* Assets.xcassets in Resources */,
 				4B6D5DBA2AD2E12D006902F1 /* MoviesTableViewCell.xib in Resources */,
 			);
@@ -252,6 +259,7 @@
 				4BF75C5E2AD42616006C938F /* MoviesListViewModel.swift in Sources */,
 				4BF75C5C2AD417BD006C938F /* Genre.swift in Sources */,
 				4BF75C692AD46B3C006C938F /* MovieDetailRouter.swift in Sources */,
+				4B0CF1822AD575540081302F /* PosterImageModalViewController.swift in Sources */,
 				4BF75C652AD46049006C938F /* MovieDetailSceneBuilder.swift in Sources */,
 				4B550BB62AD0BFB40010BC89 /* AppDelegate.swift in Sources */,
 				4BF75C552AD413E3006C938F /* MovieProviderProtocol.swift in Sources */,

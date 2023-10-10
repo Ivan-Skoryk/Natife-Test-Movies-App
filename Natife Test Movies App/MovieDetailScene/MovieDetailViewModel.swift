@@ -7,10 +7,17 @@
 
 import Foundation
 
-class MovieDetailViewModel {
+protocol MovieDetailViewModelProtocol {
+    var movieDetail: MovieDetail { get }
+    
+    func pop()
+    func navigateToFullscreenPosterImage()
+}
+
+final class MovieDetailViewModel: MovieDetailViewModelProtocol {
     var router: MovieDetailRouterProtocol!
     
-    var movieDetail: MovieDetail
+    private(set) var movieDetail: MovieDetail
     
     init(movieDetail: MovieDetail) {
         self.movieDetail = movieDetail
@@ -18,5 +25,9 @@ class MovieDetailViewModel {
     
     func pop() {
         router.pop()
+    }
+    
+    func navigateToFullscreenPosterImage() {
+        router.navigateToFullscreenPosterImage(imageURLString: movieDetail.posterImageURLString)
     }
 }
