@@ -9,19 +9,45 @@ import Foundation
 
 protocol MoviesListViewModelProtocol {
     var movies: [Movie] { get }
+    var selectedSorting: SortingOption { get }
     
+    func selectSorting(option: SortingOption)
     func setSearchString(string: String)
     func cancelSearch()
     func getMovies(reloadAll: Bool, completion: @escaping (() -> Void))
     func navigateToMovieDetail(index: Int)
 }
 
+enum SortingOption: Int, CaseIterable {
+    case popular = 0
+    case nameAsc
+    case nameDesc
+    case yearAsc
+    case yearDesc
+    case ratingAsc
+    case ratingDesc
+    
+    var title: String {
+        switch self {
+        case .popular: "Popularity"
+        case .nameAsc: "Name (A-Z)"
+        case .nameDesc: "Name (Z-A)"
+        case .yearAsc: "Year (Asc)"
+        case .yearDesc: "Year (Desc)"
+        case .ratingAsc: "Rating (Asc)"
+        case .ratingDesc: "Rating (Desc)"
+        }
+    }
+}
+
 final class MoviesListViewModel {
     var moviesProvider: MoviesListProviderProtocol
     var router: MoviesListRouterProtocol!
     
+    private var popularMovies = [Movie]()
     private var sortedMovies = [Movie]()
     private var searchedMovies = [Movie]()
+    private var searchedSorted = [Movie]()
     private let maxPages = 500
     private var searchMaxPages = 500
     
@@ -34,8 +60,22 @@ final class MoviesListViewModel {
     }
     private var searchString = ""
     
+    var selectedSorting = SortingOption.popular
+    
     init(moviesProvider: MoviesListProviderProtocol) {
         self.moviesProvider = moviesProvider
+    }
+    
+    private func sortMovies(_ movies: [Movie]) -> [Movie] {
+        switch selectedSorting {
+        case .popular: return movies
+        case .nameAsc: return movies.sorted(by: { $0.title < $1.title })
+        case .nameDesc: return movies.sorted(by: { $0.title > $1.title })
+        case .yearAsc: return movies.sorted(by: { $0.year < $1.year })
+        case .yearDesc: return movies.sorted(by: { $0.year > $1.year })
+        case .ratingAsc: return movies.sorted(by: { $0.rating < $1.rating })
+        case .ratingDesc: return movies.sorted(by: { $0.rating > $1.rating })
+        }
     }
     
     private func getMovieDetail(for index: Int, completion: @escaping ((Result<MovieDetails, Error>) -> Void)) {
@@ -44,7 +84,7 @@ final class MoviesListViewModel {
     }
     
     private func getPopularMovies(reloadAll: Bool = false, completion: @escaping (() -> Void)) {
-        let page = reloadAll ? 1 : (sortedMovies.count / 20) + 1
+        let page = reloadAll ? 1 : (popularMovies.count / 20) + 1
         
         guard page <= maxPages else {
             completion()
@@ -55,9 +95,10 @@ final class MoviesListViewModel {
             switch result {
             case .success(let list):
                 if reloadAll {
-                    self?.sortedMovies.removeAll()
+                    self?.popularMovies.removeAll()
                 }
-                self?.sortedMovies.append(contentsOf: list.movies)
+                self?.popularMovies.append(contentsOf: list.movies)
+                self?.sortedMovies += self?.sortMovies(list.movies) ?? []
                 completion()
             case .failure(let error):
                 self?.router.presentError(error) {
@@ -82,6 +123,7 @@ final class MoviesListViewModel {
                     self?.searchedMovies.removeAll()
                 }
                 self?.searchedMovies.append(contentsOf: list.movies)
+                self?.searchedSorted += self?.sortMovies(list.movies) ?? []
                 self?.searchMaxPages = list.totalPages
                 completion()
             case .failure(let error):
@@ -100,7 +142,15 @@ final class MoviesListViewModel {
 
 extension MoviesListViewModel: MoviesListViewModelProtocol {
     var movies: [Movie] {
-        isSearching ? searchedMovies : sortedMovies
+        isSearching 
+        ? selectedSorting == .popular ? searchedMovies : searchedSorted
+        : selectedSorting == .popular ? popularMovies : sortedMovies
+    }
+    
+    func selectSorting(option: SortingOption) {
+        selectedSorting = option
+        searchedSorted = sortMovies(searchedMovies)
+        sortedMovies = sortMovies(popularMovies)
     }
     
     func getMovies(reloadAll: Bool = false, completion: @escaping (() -> Void)) {

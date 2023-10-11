@@ -118,17 +118,21 @@ final class MoviesViewController: UIViewController {
     
     @objc private func sortActionSheet() {
         let alert = UIAlertController(title: nil, message: "Sorting Options", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "By Name (A-Z)", style: .default))
-        alert.addAction(UIAlertAction(title: "By Name (Z-A)", style: .default))
-        alert.addAction(UIAlertAction(title: "By Year (Asc)", style: .default))
-        alert.addAction(UIAlertAction(title: "By Year (Desc)", style: .default))
-        alert.addAction(UIAlertAction(title: "By Rating (Asc)", style: .default))
-        alert.addAction(UIAlertAction(title: "By Rating (Desc)", style: .default))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
-        let action = UIAlertAction(title: "action", style: .default)
-        action.setValue(true, forKey: "checked")
-        alert.addAction(action)
+        SortingOption.allCases.forEach { option in
+            let action = UIAlertAction(title: "By \(option.title)", style: .default) { [weak self] _ in
+                self?.viewModel.selectSorting(option: option)
+                self?.tableView.reloadData()
+            }
+            
+            if option == viewModel.selectedSorting {
+                action.setValue(true, forKey: "checked")
+            }
+            
+            alert.addAction(action)
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
         present(alert, animated: true)
     }
