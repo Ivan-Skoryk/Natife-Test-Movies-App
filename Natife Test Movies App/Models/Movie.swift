@@ -13,7 +13,7 @@ struct Movie {
     let year: String
     let title: String
     let posterImageURLString: String?
-    let backdropwImageURLString: String?
+    let backdropImageURLString: String?
     let genres: [GenreDTO]
     let video: Bool
 }

@@ -49,7 +49,7 @@ final class MoviesListProvider {
                 year: year,
                 title: movie.title,
                 posterImageURLString: getImageURL(for: movie.posterPath, imageSize: .w780),
-                backdropwImageURLString: getImageURL(for: movie.backdropPath, imageSize: .w1280),
+                backdropImageURLString: getImageURL(for: movie.backdropPath, imageSize: .w1280),
                 genres: genres,
                 video: movie.video
             )

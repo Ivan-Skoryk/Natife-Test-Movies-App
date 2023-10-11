@@ -94,7 +94,7 @@ final class MoviesTableViewCell: UITableViewCell {
     }
     
     func config(with movie: Movie) {
-        if let urlString = movie.backdropwImageURLString ?? movie.posterImageURLString,
+        if let urlString = movie.backdropImageURLString ?? movie.posterImageURLString,
            let url = URL(string: urlString) {
             setupProgressView()
             
