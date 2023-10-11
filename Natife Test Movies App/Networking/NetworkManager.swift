@@ -8,42 +8,12 @@
 import Foundation
 import Alamofire
 
-enum NetworkError: Error {
-    case noData
-    case noConnection
-}
-
-extension NetworkError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .noData:
-            NSLocalizedString("No Data Available", comment: "")
-        case .noConnection:
-            NSLocalizedString("You are offline. Please, enable your Wi-Fi or connect using cellular data.", comment: "")
-        }
-    }
-}
-
-protocol NetworkManagerProtocol {
-    func searchMovieRequest(name: String, page: Int, completion: @escaping ((Result<Data, Error>) -> Void))
-    func popularMoviesRequest(page: Int, completion: @escaping ((Result<Data, Error>) -> Void))
-    func movieDetailRequest(movieID: Int, completion: @escaping ((Result<Data, Error>) -> Void))
-    func movieGenresRequest(params: Parameters, completion: @escaping ((Result<Data, Error>) -> Void))
-}
-
 final class NetworkManager {
     static var shared = NetworkManager()
     
     enum Constants {
         static let baseURLString = "https://api.themoviedb.org/3/"
         static let baseImageStorageURL = "https://image.tmdb.org/t/p"
-    }
-    
-    enum Endpoints: String {
-        case search = "search/movie"
-        case popular = "movie/popular"
-        case detail = "movie/"
-        case genres = "genre/movie/list"
     }
     
     private let baseHeaders: HTTPHeaders = [
@@ -53,7 +23,7 @@ final class NetworkManager {
     
     let reachability = NetworkReachabilityManager.default
     
-    private func baseRequest(
+    func baseRequest(
         url: String,
         params: Parameters? = nil,
         completion: @escaping ((Result<Data, Error>) -> Void)
@@ -82,39 +52,17 @@ final class NetworkManager {
     }
 }
 
-extension NetworkManager: NetworkManagerProtocol {
-    func searchMovieRequest(name: String, page: Int,  completion: @escaping ((Result<Data, Error>) -> Void)) {
-        let params: [String: Any] = [
-            "query": name,
-            "include_adult": false,
-            "language": "en-US",
-            "page": page
-        ]
-        
-        let url = Constants.baseURLString + Endpoints.search.rawValue
-        
-        baseRequest(url: url, params: params, completion: completion)
-    }
-    
-    func popularMoviesRequest(page: Int, completion: @escaping ((Result<Data, Error>) -> Void)) {
-        let params = [
-            "page": page
-        ]
-        
-        let url = Constants.baseURLString + Endpoints.popular.rawValue
-        
-        baseRequest(url: url, params: params, completion: completion)
-    }
-    
-    func movieDetailRequest(movieID: Int, completion: @escaping ((Result<Data, Error>) -> Void)) {
-        let url = Constants.baseURLString + Endpoints.detail.rawValue + "\(movieID)"
-        
-        baseRequest(url: url, completion: completion)
-    }
-    
-    func movieGenresRequest(params: Parameters, completion: @escaping ((Result<Data, Error>) -> Void)) {
-        let url = Constants.baseURLString + Endpoints.genres.rawValue
-        
-        baseRequest(url: url, params: params, completion: completion)
+func decodeData<T: Codable>(of type: T.Type, from result: Result<Data, Error>, completion: @escaping ((Result<T, Error>) -> Void)) {
+    switch result {
+    case .success(let data):
+        do {
+            let decoded = try JSONDecoder().decode(T.self, from: data)
+            completion(.success(decoded))
+        } catch {
+            completion(.failure(error))
+        }
+    case .failure(let error):
+        completion(.failure(error))
+        break
     }
 }

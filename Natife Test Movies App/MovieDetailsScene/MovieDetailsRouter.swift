@@ -1,23 +1,24 @@
 //
-//  MovieDetailRouter.swift
+//  MovieDetailsRouter.swift
 //  Natife Test Movies App
 //
 //  Created by Ivan Skoryk on 09.10.2023.
 //
 
 import UIKit
+import WebKit
 
-protocol MovieDetailRouterProtocol {
+protocol MovieDetailsRouterProtocol {
     func navigateToFullscreenPosterImage(imageURLString: String)
-    func navigateToVideoPlayer()
+    func navigateToVideoPlayer(urlString: String)
     func pop()
 }
 
-final class MovieDetailRouter {
+final class MovieDetailsRouter {
     var viewController: UIViewController?
 }
 
-extension MovieDetailRouter: MovieDetailRouterProtocol {
+extension MovieDetailsRouter: MovieDetailsRouterProtocol {
     func navigateToFullscreenPosterImage(imageURLString: String) {
         let posterModalViewController = PosterImageModalViewController()
         posterModalViewController.posterImageURLString = imageURLString
@@ -27,7 +28,12 @@ extension MovieDetailRouter: MovieDetailRouterProtocol {
         viewController?.navigationController?.present(UINavigationController(rootViewController: posterModalViewController), animated: true)
     }
     
-    func navigateToVideoPlayer() {
+    func navigateToVideoPlayer(urlString: String) {
+        let vc = WebViewController()
+        vc.url = urlString
+        vc.modalPresentationStyle = .popover
+        
+        viewController?.present(UINavigationController(rootViewController: vc), animated: true)
     }
     
     func pop() {

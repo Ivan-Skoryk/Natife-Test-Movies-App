@@ -9,7 +9,7 @@ import Foundation
 
 final class MoviesSceneBuilder {
     static func createScene() -> MoviesViewController {
-        let moviesProvider = MovieProvider(networkManager: NetworkManager.shared)
+        let moviesProvider = MoviesListProvider(networkManager: NetworkManager.shared)
         let viewModel = MoviesListViewModel(moviesProvider: moviesProvider)
         let router = MoviesListRouter()
         let viewController = MoviesViewController()

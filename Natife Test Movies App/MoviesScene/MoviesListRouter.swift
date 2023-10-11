@@ -8,7 +8,7 @@
 import UIKit
 
 protocol MoviesListRouterProtocol {
-    func navigateToMovieDetails(movieDetail: MovieDetail)
+    func navigateToMovieDetails(movieDetails: MovieDetails)
     func presentError(_ error: Error, onDismiss: @escaping (() -> Void))
 }
 
@@ -17,8 +17,8 @@ final class MoviesListRouter {
 }
 
 extension MoviesListRouter: MoviesListRouterProtocol {
-    func navigateToMovieDetails(movieDetail: MovieDetail) {
-        let vc = MovieDetailSceneBuilder.createScene(with: movieDetail)
+    func navigateToMovieDetails(movieDetails: MovieDetails) {
+        let vc = MovieDetailsSceneBuilder.createScene(with: movieDetails)
         viewController?.navigationController?.pushViewController(vc, animated: true)
     }
     

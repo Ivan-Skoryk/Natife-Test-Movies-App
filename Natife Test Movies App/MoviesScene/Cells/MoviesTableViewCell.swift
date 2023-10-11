@@ -110,6 +110,6 @@ final class MoviesTableViewCell: UITableViewCell {
         
         titleAndYearLabel.text = movie.title + ", " + movie.year
         genresLabel.text = movie.genres.map { $0.name }.joined(separator: ", ")
-        ratingsLabel.text = "Rating: \(movie.rating)"
+        ratingsLabel.text = String(format: "Rating: %.1f", movie.rating)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  MovieProvider.swift
+//  MoviesListProvider.swift
 //  Natife Test Movies App
 //
 //  Created by Ivan Skoryk on 09.10.2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MovieProvider {
+final class MoviesListProvider {
     enum ImageSize: String {
         case w300 = "/w300/"
         case w500 = "/w500/"
@@ -16,22 +16,18 @@ final class MovieProvider {
         case original = "/original/"
     }
     
-    private let networkManager: NetworkManagerProtocol!
+    private let networkManager: MovieListNetworkManagerProtocol!
     
     private var genres = [GenreDTO]()
     
-    init(networkManager: NetworkManagerProtocol) {
+    init(networkManager: MovieListNetworkManagerProtocol) {
         self.networkManager = networkManager
         getGenres()
     }
     
     private func getGenres() {
-        let params = [
-            "language": "en"
-        ]
-        
-        networkManager.movieGenresRequest(params: params) { [weak self] result in
-            self?.decodeData(of: GenresDTO.self, from: result) { [weak self] result in
+        networkManager.movieGenresRequest() { [weak self] result in
+            decodeData(of: GenresDTO.self, from: result) { [weak self] result in
                 switch result {
                 case .success(let genres):
                     self?.genres = genres.genres
@@ -83,22 +79,7 @@ final class MovieProvider {
     }
 }
 
-extension MovieProvider: MovieProviderProtocol {
-    private func decodeData<T:Codable>(of type: T.Type, from result: Result<Data, Error>, completion: @escaping (((Result<T, Error>)) -> Void)) {
-        switch result {
-        case .success(let data):
-            do {
-                let decoded = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(decoded))
-            } catch {
-                completion(.failure(error))
-            }
-        case .failure(let error):
-            completion(.failure(error))
-            break
-        }
-    }
-    
+extension MoviesListProvider: MoviesListProviderProtocol {
     private func handleMoviesListDTOResult(
         _ result: Result<MoviesListDTO, Error>,
         completion: @escaping ((Result<MoviesList, Error>) -> Void)
@@ -119,35 +100,35 @@ extension MovieProvider: MovieProviderProtocol {
         }
         
         networkManager.popularMoviesRequest(page: page) { [weak self] result in
-            self?.decodeData(of: MoviesListDTO.self, from: result) { [weak self] result in
+            decodeData(of: MoviesListDTO.self, from: result) { [weak self] result in
                 self?.handleMoviesListDTOResult(result, completion: completion)
             }
         }
     }
     
-    func getMovieDetail(for movieID: Int, completion: @escaping ((Result<MovieDetail, Error>) -> Void)) {
+    func getMovieDetail(for movieID: Int, completion: @escaping ((Result<MovieDetails, Error>) -> Void)) {
         if genres.count == 0 {
             getGenres()
         }
         
         networkManager.movieDetailRequest(movieID: movieID) { [weak self] result in
-            self?.decodeData(of: MovieDetailDTO.self, from: result) { [weak self] result in
+            decodeData(of: MovieDetailsDTO.self, from: result) { [weak self] result in
                 switch result {
-                case .success(let detailDTO):
-                    let countries = detailDTO.productionCountries.map { $0.name }
-                    let year = self?.extractYear(from: detailDTO.releaseDate) ?? "Unknown"
-                    let posterURL = self?.getImageURL(for: detailDTO.posterPath, imageSize: .original) ?? ""
-                    let backdropURL = self?.getImageURL(for: detailDTO.backdropPath, imageSize: .original) ?? ""
+                case .success(let detailsDTO):
+                    let countries = detailsDTO.productionCountries.map { $0.name }
+                    let year = self?.extractYear(from: detailsDTO.releaseDate) ?? "Unknown"
+                    let posterURL = self?.getImageURL(for: detailsDTO.posterPath, imageSize: .original) ?? ""
+                    let backdropURL = self?.getImageURL(for: detailsDTO.backdropPath, imageSize: .original) ?? ""
                     
-                    let detail = MovieDetail(
-                        id: detailDTO.id,
-                        genres: detailDTO.genres,
-                        title: detailDTO.title,
+                    let detail = MovieDetails(
+                        id: detailsDTO.id,
+                        genres: detailsDTO.genres,
+                        title: detailsDTO.title,
                         countries: countries,
                         year: year,
-                        rating: detailDTO.rating,
-                        overview: detailDTO.overview,
-                        video: detailDTO.video,
+                        rating: detailsDTO.rating,
+                        overview: detailsDTO.overview,
+                        video: detailsDTO.video,
                         posterImageURLString: posterURL,
                         backdropImageURLString: backdropURL
                     )
@@ -165,7 +146,7 @@ extension MovieProvider: MovieProviderProtocol {
         }
         
         networkManager.searchMovieRequest(name: name, page: page) { [weak self] result in
-            self?.decodeData(of: MoviesListDTO.self, from: result) { [weak self] result in
+            decodeData(of: MoviesListDTO.self, from: result) { [weak self] result in
                 self?.handleMoviesListDTOResult(result, completion: completion)
             }
         }

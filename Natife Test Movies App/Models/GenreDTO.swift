@@ -1,5 +1,5 @@
 //
-//  Genre.swift
+//  GenreDTO.swift
 //  Natife Test Movies App
 //
 //  Created by Ivan Skoryk on 09.10.2023.

@@ -1,5 +1,5 @@
 //
-//  MovieDetailViewController.swift
+//  MovieDetailsViewController.swift
 //  Natife Test Movies App
 //
 //  Created by Ivan Skoryk on 08.10.2023.
@@ -8,11 +8,12 @@
 import UIKit
 import Kingfisher
 
-final class MovieDetailViewController: UIViewController {
+final class MovieDetailsViewController: UIViewController {
     @IBOutlet private weak var posterImageView: UIImageView!
     @IBOutlet private weak var movieTitleLabel: UILabel!
     @IBOutlet private weak var countryAndYearLabel: UILabel!
     @IBOutlet private weak var genresLabel: UILabel!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet private weak var movieTrailerButton: UIButton!
     @IBOutlet private weak var ratingsLabel: UILabel!
     @IBOutlet private weak var movieDescriptionLabel: UILabel!
@@ -21,28 +22,44 @@ final class MovieDetailViewController: UIViewController {
     private var progressStackView = UIStackView()
     private var progressView = UIProgressView()
     
-    var viewModel: MovieDetailViewModelProtocol!
+    var viewModel: MovieDetailsViewModelProtocol!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        getTrailer()
+    }
+    
+    private func getTrailer() {
+        activityIndicator.startAnimating()
+        viewModel.getLatestTrailer { [weak self] hasTrailer in
+            DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
+                self?.activityIndicator.removeFromSuperview()
+                self?.setupTrailerButton(isHidden: !hasTrailer)
+            }
+        }
     }
     
     private func setupUI() {
         setupNavigationBar()
         setupPosterImageView()
         
-        title = viewModel.movieDetail.title
-        movieTitleLabel.text = viewModel.movieDetail.title
+        title = viewModel.movieDetails.title
+        movieTitleLabel.text = viewModel.movieDetails.title
         
-        let countries = viewModel.movieDetail.countries.joined(separator: ", ")
-        countryAndYearLabel.text = countries + ", " + viewModel.movieDetail.year
+        let countries = viewModel.movieDetails.countries.joined(separator: ", ")
+        countryAndYearLabel.text = countries + ", " + viewModel.movieDetails.year
         
-        genresLabel.text = viewModel.movieDetail.genres.map { $0.name }.joined(separator: ", ")
-        ratingsLabel.text = "Rating: \(String(format: "%.2f", viewModel.movieDetail.rating))/10"
+        genresLabel.text = viewModel.movieDetails.genres.map { $0.name }.joined(separator: ", ")
+        ratingsLabel.text = "Rating: \(String(format: "%.2f", viewModel.movieDetails.rating))/10"
         
-        movieDescriptionLabel.text = viewModel.movieDetail.overview
+        movieDescriptionLabel.text = viewModel.movieDetails.overview
+    }
+    
+    private func setupTrailerButton(isHidden: Bool) {
+        movieTrailerButton.isHidden = isHidden
     }
     
     private func setupPosterImageView() {
@@ -51,7 +68,7 @@ final class MovieDetailViewController: UIViewController {
         posterImageView.layer.shadowOpacity = 0.6
         posterImageView.clipsToBounds = false
         
-        guard let url = URL(string: viewModel.movieDetail.posterImageURLString) else {
+        guard let url = URL(string: viewModel.movieDetails.posterImageURLString) else {
             setupNoImageAvailable()
             return
         }
@@ -128,6 +145,6 @@ final class MovieDetailViewController: UIViewController {
     }
     
     @IBAction private func trailerButtonDidTap(_ sender: UIButton) {
-        print(#function)
+        viewModel.navigateToTrailer()
     }
 }

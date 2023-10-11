@@ -17,7 +17,7 @@ protocol MoviesListViewModelProtocol {
 }
 
 final class MoviesListViewModel {
-    var moviesProvider: MovieProviderProtocol
+    var moviesProvider: MoviesListProviderProtocol
     var router: MoviesListRouterProtocol!
     
     private var sortedMovies = [Movie]()
@@ -34,11 +34,11 @@ final class MoviesListViewModel {
     }
     private var searchString = ""
     
-    init(moviesProvider: MovieProviderProtocol) {
+    init(moviesProvider: MoviesListProviderProtocol) {
         self.moviesProvider = moviesProvider
     }
     
-    private func getMovieDetail(for index: Int, completion: @escaping ((Result<MovieDetail, Error>) -> Void)) {
+    private func getMovieDetail(for index: Int, completion: @escaping ((Result<MovieDetails, Error>) -> Void)) {
         let movie = isSearching ? searchedMovies[index].id : sortedMovies[index].id
         moviesProvider.getMovieDetail(for: movie, completion: completion)
     }
@@ -114,8 +114,8 @@ extension MoviesListViewModel: MoviesListViewModelProtocol {
     func navigateToMovieDetail(index: Int) {
         getMovieDetail(for: index) { [weak self] result in
             switch result {
-            case .success(let detail):
-                self?.router.navigateToMovieDetails(movieDetail: detail)
+            case .success(let details):
+                self?.router.navigateToMovieDetails(movieDetails: details)
             case .failure(let error):
                 self?.router.presentError(error) {}
             }
