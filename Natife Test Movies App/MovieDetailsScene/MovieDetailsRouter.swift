@@ -29,7 +29,7 @@ extension MovieDetailsRouter: MovieDetailsRouterProtocol {
     }
     
     func navigateToVideoPlayer(urlString: String) {
-        let vc = WebViewController()
+        let vc = TrailerWebViewController()
         vc.url = urlString
         vc.modalPresentationStyle = .popover
         

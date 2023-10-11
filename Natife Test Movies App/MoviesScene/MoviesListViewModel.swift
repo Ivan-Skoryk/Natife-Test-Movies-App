@@ -29,13 +29,13 @@ enum SortingOption: Int, CaseIterable {
     
     var title: String {
         switch self {
-        case .popular: "Popularity"
-        case .nameAsc: "Name (A-Z)"
-        case .nameDesc: "Name (Z-A)"
-        case .yearAsc: "Year (Asc)"
-        case .yearDesc: "Year (Desc)"
-        case .ratingAsc: "Rating (Asc)"
-        case .ratingDesc: "Rating (Desc)"
+        case .popular: "By Popularity".localized
+        case .nameAsc: "By Name (A-Z)".localized
+        case .nameDesc: "By Name (Z-A)".localized
+        case .yearAsc: "By Year (Asc)".localized
+        case .yearDesc: "By Year (Desc)".localized
+        case .ratingAsc: "By Rating (Asc)".localized
+        case .ratingDesc: "By Rating (Desc)".localized
         }
     }
 }

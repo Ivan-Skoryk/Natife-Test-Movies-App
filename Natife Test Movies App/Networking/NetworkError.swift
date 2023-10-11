@@ -16,7 +16,7 @@ extension NetworkError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .noData:
-            NSLocalizedString("No Data Available", comment: "")
+            NSLocalizedString("NetworkError.NoDataAvailable", comment: "")
         case .noConnection:
             NSLocalizedString("You are offline. Please, enable your Wi-Fi or connect using cellular data.", comment: "")
         }

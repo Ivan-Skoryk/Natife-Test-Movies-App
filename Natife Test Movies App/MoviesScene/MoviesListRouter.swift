@@ -25,8 +25,16 @@ extension MoviesListRouter: MoviesListRouterProtocol {
     func presentError(_ error: Error, onDismiss: @escaping (() -> Void)) {
         let description = error.localizedDescription
         
-        let alert = UIAlertController(title: "Error", message: description, preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .cancel) { _ in
+        let alert = UIAlertController(
+            title: "Error".localized,
+            message: description,
+            preferredStyle: .alert
+        )
+        
+        let action = UIAlertAction(
+            title: "OK".localized,
+            style: .cancel
+        ) { _ in
             onDismiss()
         }
         alert.addAction(action)

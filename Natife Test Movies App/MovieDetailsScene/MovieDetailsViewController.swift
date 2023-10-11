@@ -53,7 +53,10 @@ final class MovieDetailsViewController: UIViewController {
         countryAndYearLabel.text = countries + ", " + viewModel.movieDetails.year
         
         genresLabel.text = viewModel.movieDetails.genres.map { $0.name }.joined(separator: ", ")
-        ratingsLabel.text = "Rating: \(String(format: "%.2f", viewModel.movieDetails.rating))/10"
+        ratingsLabel.text = String(
+            format: "MoviesListViewController.RatingsLabel.format".localized,
+            viewModel.movieDetails.rating
+        )
         
         movieDescriptionLabel.text = viewModel.movieDetails.overview
     }
@@ -103,7 +106,7 @@ final class MovieDetailsViewController: UIViewController {
     
     private func setupNoImageAvailable() {
         let label = UILabel()
-        label.text = "No Image Available"
+        label.text = "MovieDetailsViewController.NoImageLabel.text".localized
         label.textColor = .lightGray
         label.numberOfLines = 2
         label.textAlignment = .center

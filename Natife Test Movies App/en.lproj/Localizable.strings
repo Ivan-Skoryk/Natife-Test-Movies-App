@@ -1,0 +1,48 @@
+/* 
+  Localizable.strings
+  Natife Test Movies App
+
+  Created by Ivan Skoryk on 11.10.2023.
+  
+*/
+
+"Error" = "Error";
+"OK" = "OK";
+"Cancel" = "Cancel";
+
+// MovieListProvider
+"Release year: Unknown" = "Release year: Unknown";
+"Unknown" = "Unknown";
+
+// NetworkError
+"NetworkError.NoDataAvailable" = "No Data Available";
+"You are offline. Please, enable your Wi-Fi or connect using cellular data." = "You are offline. Please, enable your Wi-Fi or connect using cellular data.";
+
+// MoviesTableViewCell
+"MoviesTableViewCell.NoImageLabel.text" = "No Image Available";
+"MoviesTableViewCell.RatingsLabel.format" = "Rating: %.1f";
+
+// Sorting Option
+"Sorting Options" = "Sorting Options";
+"By Popularity" = "By Popularity";
+"By Name (A-Z)" = "By Name (A-Z)";
+"By Name (Z-A)" = "By Name (Z-A)";
+"By Year (Asc)" = "By Year (Asc)";
+"By Year (Desc)" = "By Year (Desc)";
+"By Rating (Asc)" = "By Rating (Asc)";
+"By Rating (Desc)" = "By Rating (Desc)";
+
+// MoviesListViewController
+"MoviesListViewController.NoDataLabel.text" = "No Data Available";
+"MoviesListViewController.title" = "Popular Movies";
+"MoviesListViewController.PullToRefresh" = "Pull to refresh";
+
+// MovieDetailsViewController
+"MoviesListViewController.RatingsLabel.format" = "Rating: %.2f/10";
+"MovieDetailsViewController.NoImageLabel.text" = "No Image Available";
+
+// PosterImageModalViewController
+"PosterImageModalViewController.title" = "Poster";
+
+// TrailerWebViewController
+"TrailerWebViewController.title" = "Trailer";

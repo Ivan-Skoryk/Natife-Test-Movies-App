@@ -1,0 +1,48 @@
+/* 
+  Localizable.strings
+  Natife Test Movies App
+
+  Created by Ivan Skoryk on 11.10.2023.
+  
+*/
+
+"Error" = "Помилка";
+"OK" = "OK";
+"Cancel" = "Відмінити";
+
+// MovieListProvider
+"Release year: Unknown" = "Рік випуску: Невідомо";
+"Unknown" = "Невідомо";
+
+// NetworkError
+"NetworkError.NoDataAvailable" = "Дані недоступні";
+"You are offline. Please, enable your Wi-Fi or connect using cellular data." = "Ви відключені від мережі. Будь-ласка, увімкніть WiFi або підключіться задопомогою мобільних даних.";
+
+// MoviesTableViewCell
+"MoviesTableViewCell.NoImageLabel.text" = "Зображення недоступне";
+"MoviesTableViewCell.RatingsLabel.format" = "Рейтинг: %.1f";
+
+// Sorting Option
+"Sorting Options" = "Опції сортування";
+"By Popularity" = "За популярністю";
+"By Name (A-Z)" = "За назвою (А-Я)";
+"By Name (Z-A)" = "За назвою (Я-А)";
+"By Year (Asc)" = "За роком (>)";
+"By Year (Desc)" = "За роком (<)";
+"By Rating (Asc)" = "За рейтингом (>)";
+"By Rating (Desc)" = "За рейтингом (<)";
+
+// MoviesListViewController
+"MoviesListViewController.NoDataLabel.text" = "Зображення недоступне";
+"MoviesListViewController.title" = "Популярні фільми";
+"MoviesListViewController.PullToRefresh" = "Потягніть, щоб оновити";
+
+// MovieDetailsViewController
+"MoviesListViewController.RatingsLabel.format" = "Рейтинг: %.2f/10";
+"MovieDetailsViewController.NoImageLabel.text" = "Зображення недоступне";
+
+// PosterImageModalViewController
+"PosterImageModalViewController.title" = "Постер";
+
+// TrailerWebViewController
+"TrailerWebViewController.title" = "Трейлер";

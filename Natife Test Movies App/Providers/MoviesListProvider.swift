@@ -70,7 +70,7 @@ final class MoviesListProvider {
         formatter.dateFormat = "YYYY-MM-dd"
         
         guard let date = formatter.date(from: date) else {
-            return "Release year: Unknown"
+            return "Release year: Unknown".localized
         }
         
         let calendar = Calendar.current
@@ -116,7 +116,7 @@ extension MoviesListProvider: MoviesListProviderProtocol {
                 switch result {
                 case .success(let detailsDTO):
                     let countries = detailsDTO.productionCountries.map { $0.name }
-                    let year = self?.extractYear(from: detailsDTO.releaseDate) ?? "Unknown"
+                    let year = self?.extractYear(from: detailsDTO.releaseDate) ?? "Unknown".localized
                     let posterURL = self?.getImageURL(for: detailsDTO.posterPath, imageSize: .original) ?? ""
                     let backdropURL = self?.getImageURL(for: detailsDTO.backdropPath, imageSize: .original) ?? ""
                     

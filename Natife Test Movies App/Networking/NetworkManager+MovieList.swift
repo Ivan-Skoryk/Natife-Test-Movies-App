@@ -12,7 +12,7 @@ extension NetworkManager: MovieListNetworkManagerProtocol {
         let params: [String: Any] = [
             "query": name,
             "include_adult": false,
-            "language": "en-US",
+            "language": Locale.current.languageCode ?? "en",
             "page": page
         ]
         
@@ -22,8 +22,9 @@ extension NetworkManager: MovieListNetworkManagerProtocol {
     }
     
     func popularMoviesRequest(page: Int, completion: @escaping ((Result<Data, Error>) -> Void)) {
-        let params = [
-            "page": page
+        let params: [String: Any] = [
+            "page": page,
+            "language": Locale.current.languageCode ?? "en",
         ]
         
         let url = Constants.baseURLString + Endpoints.popular.rawValue
@@ -32,14 +33,17 @@ extension NetworkManager: MovieListNetworkManagerProtocol {
     }
     
     func movieDetailRequest(movieID: Int, completion: @escaping ((Result<Data, Error>) -> Void)) {
+        let params = [
+            "language": Locale.current.languageCode ?? "en"
+        ]
         let url = Constants.baseURLString + Endpoints.details.rawValue + "\(movieID)"
         
-        baseRequest(url: url, completion: completion)
+        baseRequest(url: url, params: params, completion: completion)
     }
     
     func movieGenresRequest(completion: @escaping ((Result<Data, Error>) -> Void)) {
         let params = [
-            "language": "en"
+            "language": Locale.current.languageCode ?? "en"
         ]
         
         let url = Constants.baseURLString + Endpoints.genres.rawValue

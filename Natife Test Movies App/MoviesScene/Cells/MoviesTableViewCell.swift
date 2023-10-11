@@ -52,7 +52,7 @@ final class MoviesTableViewCell: UITableViewCell {
     
     private func setupNoImageAvailable() {
         let label = UILabel()
-        label.text = "No Image Available"
+        label.text = "MoviesTableViewCell.NoImageLabel.text".localized
         label.textColor = .lightGray
         label.numberOfLines = 2
         label.textAlignment = .center
@@ -110,6 +110,9 @@ final class MoviesTableViewCell: UITableViewCell {
         
         titleAndYearLabel.text = movie.title + ", " + movie.year
         genresLabel.text = movie.genres.map { $0.name }.joined(separator: ", ")
-        ratingsLabel.text = String(format: "Rating: %.1f", movie.rating)
+        ratingsLabel.text = String(
+            format: "MoviesTableViewCell.RatingsLabel.format".localized,
+            movie.rating
+        )
     }
 }

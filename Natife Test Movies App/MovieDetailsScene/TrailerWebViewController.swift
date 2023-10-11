@@ -1,5 +1,5 @@
 //
-//  WebViewController.swift
+//  TrailerWebViewController.swift
 //  Natife Test Movies App
 //
 //  Created by Ivan Skoryk on 11.10.2023.
@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-final class WebViewController: UIViewController {
+final class TrailerWebViewController: UIViewController {
     @IBOutlet private weak var webView: WKWebView!
     
     var url = ""
@@ -17,13 +17,13 @@ final class WebViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        setupWebView()
     }
     
     private func setupUI() {
-        title = "Trailer"
+        title = "Trailer".localized
         setupBlur()
         setupCloseButton()
-        setupWebView()
     }
     
     private func setupBlur() {

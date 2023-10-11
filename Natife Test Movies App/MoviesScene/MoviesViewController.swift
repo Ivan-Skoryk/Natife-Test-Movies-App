@@ -14,7 +14,7 @@ final class MoviesViewController: UIViewController {
     private lazy var noDataLabel: UILabel = {
         let label = UILabel()
         
-        label.text = "No Data Available"
+        label.text = "Label.NoDataAvailable".localized
         label.numberOfLines = 2
         label.textAlignment = .center
         label.textColor = .lightGray
@@ -57,12 +57,12 @@ final class MoviesViewController: UIViewController {
         setupSortingButton()
         setupSearchBar()
         setupNoDataLabel()
-        title = "Popular Movies"
+        title = "MoviesListViewController.title".localized
     }
     
     private func setupTableView() {
         tableView.insertSubview(refreshControl, at: 0)
-        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.attributedTitle = NSAttributedString(string: "MoviesListViewController.PullToRefresh".localized)
         refreshControl.addTarget(self, action: #selector(refreshControlReload), for: .valueChanged)
         
         tableView.register(UINib(nibName: "MoviesTableViewCell", bundle: nil), forCellReuseIdentifier: "MoviesTableViewCell")
@@ -117,10 +117,14 @@ final class MoviesViewController: UIViewController {
     }
     
     @objc private func sortActionSheet() {
-        let alert = UIAlertController(title: nil, message: "Sorting Options", preferredStyle: .actionSheet)
+        let alert = UIAlertController(
+            title: nil,
+            message: "Sorting Options".localized,
+            preferredStyle: .actionSheet
+        )
         
         SortingOption.allCases.forEach { option in
-            let action = UIAlertAction(title: "By \(option.title)", style: .default) { [weak self] _ in
+            let action = UIAlertAction(title: option.title, style: .default) { [weak self] _ in
                 self?.viewModel.selectSorting(option: option)
                 self?.tableView.reloadData()
             }
@@ -132,7 +136,7 @@ final class MoviesViewController: UIViewController {
             alert.addAction(action)
         }
         
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Cancel".localized, style: .cancel))
         
         present(alert, animated: true)
     }

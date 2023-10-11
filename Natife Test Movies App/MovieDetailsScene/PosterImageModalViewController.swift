@@ -22,7 +22,7 @@ final class PosterImageModalViewController: UIViewController {
     }
     
     private func setupUI() {
-        title = "Poster"
+        title = "PosterImageModalViewController.title".localized
         setupBlur()
         setupCloseButton()
         setupPosterImageView()
